@@ -6,27 +6,29 @@
 #include <grpcpp/health_check_service_interface.h>
 #include <grpcpp/ext/proto_server_reflection_plugin.h>
 
-#include "echo.grpc.pb.h"
-#include "echo.pb.h"
+#include "suggest.grpc.pb.h"
+#include "suggest.pb.h"
 
 using grpc::ClientContext;
 using grpc::Status;
-using echo::HelloRequest;
-using echo::HelloResponse;
-using echo::Echo;
+using suggest::SuggestRequest;
+using suggest::SuggestResponse;
+using suggest::Suggest;
 
 int main(int argc, char** argv) {
 
   auto channel = grpc::CreateChannel("0.0.0.0:9090", grpc::InsecureChannelCredentials());
-  auto client = Echo::NewStub(channel);
-  HelloResponse response;
+  auto client = Suggest::NewStub(channel);
+  SuggestResponse response;
   ClientContext context;
-  HelloRequest request;
-  request.set_data("world");
-  Status status = client->Hello(&context, request, &response);
+  SuggestRequest request;
+  request.set_input("hel");
+  Status status = client->Answer(&context, request, &response);
 
   if (status.ok()) {
-    std::cout << response.data() << std::endl;
+      auto vec = response.suggest_answer();
+      for (const auto& elem : vec) {
+          std::cout << elem.text() << ' ' << elem.position() << std::endl;
   } else {
     return -1;
   }

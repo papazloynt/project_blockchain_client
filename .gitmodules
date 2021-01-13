@@ -7,3 +7,6 @@
 [submodule "third-party/suggestion"]
 	path = third-party/suggestion
 	url = git@github.com:papazloynt/project_blockchain_mainer.git
+[submodule "tools/gate"]
+	path = tools/gate
+	url = https://github.com/cpp-pm/gate

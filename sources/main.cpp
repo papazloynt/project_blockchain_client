@@ -9,6 +9,8 @@
 #include "suggest.grpc.pb.h"
 #include "suggest.pb.h"
 
+#include "client.hpp"
+
 using grpc::ClientContext;
 using grpc::Status;
 using suggest::SuggestRequest;

@@ -19,7 +19,7 @@ HunterGate(
   FILEPATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake"
 )
 
-project(suggestclient)
+project(Blockchainclient)
 string(APPEND CMAKE_CXX_FLAGS " -pedantic -Werror -Wall -Wextra")
 string(APPEND CMAKE_CXX_FLAGS " -Wno-unused-command-line-argument -Wno-unused-parameter")
 string(APPEND CMAKE_CXX_FLAGS " -Wshadow -Wnon-virtual-dtor")
@@ -30,6 +30,10 @@ find_package(GTest CONFIG REQUIRED)
 hunter_add_package(gRPC)
 find_package(gRPC CONFIG REQUIRED)
 
+# For SQLite3
+find_package(Threads)
+
+add_subdirectory("PicoSHA2/")
 
 set(API_GENERATED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party/suggest/ccpkg)
 
@@ -57,16 +61,37 @@ set(PROTO_GENERATED_GRPC_HEADERS
   "${API_GENERATED_DIR}/google/api/http.grpc.pb.h"
   "${API_GENERATED_DIR}/google/rpc/status.grpc.pb.h")
 
-add_executable(grpc_client
+#SQLite3
+add_library(database SHARED
+        ${CMAKE_CURRENT_SOURCE_DIR}/SQLite3/sqlite3.c)
+
+target_include_directories(database
+        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/SQLite3)
+
+target_link_libraries(database
+        PUBLIC Threads::Threads
+        dl)
+
+
+# Service client
+add_executable(service_client
   ${CMAKE_CURRENT_SOURCE_DIR}/sources/main.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/sources/client.cpp
   ${PROTO_GENERATED_SOURCES}
   ${PROTO_GENERATED_GRPC_SOURCES})
 
-target_include_directories(grpc_client PRIVATE "${API_GENERATED_DIR}")
+target_include_directories(service_client PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        "${API_GENERATED_DIR}")
 
-target_link_libraries(grpc_client
-  gRPC::grpc++ gRPC::grpc++_reflection)
+target_link_libraries(service_client
+  PUBLIC gRPC::grpc++ gRPC::grpc++_reflection
+  database
+  PRIVATE picosha)
 
+
+
+# Tests
 add_executable(tests
         # TODO: enum your files and delete this comment
         ${CMAKE_CURRENT_SOURCE_DIR}/tests/test.cpp)
@@ -87,7 +112,7 @@ if(BUILD_COVERAGE)
     list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
     find_package(codecov)
     # TODO: change template word to project name and delete this comment
-    enable_project_coverage(grpc_client)
+    enable_project_coverage(service_client)
     enable_project_coverage(tests)
     list(APPEND LCOV_REMOVE_PATTERNS "'${PROJECT_SOURCE_DIR}/tests/*'")
     coverage_evaluate()

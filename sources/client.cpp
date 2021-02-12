@@ -142,7 +142,6 @@ void BlockChainClient::AddSum() {
 
     grpc::Status status = client->AddMoney(&context, request, &response);
 
-    //Не знаю что в else будет с БД
     if (status.ok()) {
         std::cout << "You have successfully deposited "
                      "the amount into your account." << std::endl;
@@ -174,6 +173,6 @@ void BlockChainClient::Transaction() {
     if (status.ok()) {
         std::cout << "Transaction completed successfully" << std::endl;
     } else {
-        std::cout << response.answer() << std::endl;
+        std::cout << "There is no such user or you do not have enough tokens." << std::endl;
     }
 }

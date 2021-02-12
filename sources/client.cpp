@@ -27,13 +27,12 @@ BlockChainClient::BlockChainClient() {
             std::cout << "Unknown command!";
             exit(1);
     }
-    //Английский!!!!!!!!
     while (true) {
-        std::cout << "Функционал сервиса:\n"
-                     "Введите 1 чтобы сделать транзакцию.\n"
-                     "Введите 2 чтобы пополнит баланс.\n"
-                     "Введите 3 чтобы получить данные о балансе.\n"
-                     "Введите 4 чтобы выйти из системы." << std::endl;
+        std::cout << "Service functionality:\n"
+                     "Enter 1 to make a transaction.\n"
+                     "Enter 2 to top up your balance.\n"
+                     "Enter 3 to get balance data.\n"
+                     "Enter 4 to log out." << std::endl;
         std::cin >> p;
 
         switch (p) {

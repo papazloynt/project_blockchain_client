@@ -30,47 +30,31 @@ find_package(GTest CONFIG REQUIRED)
 hunter_add_package(gRPC)
 find_package(gRPC CONFIG REQUIRED)
 
-# For SQLite3
-find_package(Threads)
-
-add_subdirectory("PicoSHA2/")
-
-set(API_GENERATED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party/suggest/ccpkg)
+set(API_GENERATED_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third-party/project_blockchain_mainer/ccpkg)
 
 set(PROTO_GENERATED_SOURCES
-  "${API_GENERATED_DIR}/suggest.pb.cc"
+  "${API_GENERATED_DIR}/blockchain.pb.cc"
   "${API_GENERATED_DIR}/google/api/annotations.pb.cc"
   "${API_GENERATED_DIR}/google/api/http.pb.cc"
   "${API_GENERATED_DIR}/google/rpc/status.pb.cc")
 
 set(PROTO_GENERATED_HEADERS
-  "${API_GENERATED_DIR}/suggest.pb.h"
+  "${API_GENERATED_DIR}/blockchain.pb.h"
   "${API_GENERATED_DIR}/google/api/annotations.pb.h"
   "${API_GENERATED_DIR}/google/api/http.pb.h"
   "${API_GENERATED_DIR}/google/rpc/status.pb.h")
 
 set(PROTO_GENERATED_GRPC_SOURCES
-  "${API_GENERATED_DIR}/suggest.grpc.pb.cc"
+  "${API_GENERATED_DIR}/blockchain.grpc.pb.cc"
   "${API_GENERATED_DIR}/google/api/annotations.grpc.pb.cc"
   "${API_GENERATED_DIR}/google/api/http.grpc.pb.cc"
   "${API_GENERATED_DIR}/google/rpc/status.grpc.pb.cc")
 
 set(PROTO_GENERATED_GRPC_HEADERS
-  "${API_GENERATED_DIR}/suggest.grpc.pb.h"
+  "${API_GENERATED_DIR}/blockchain.grpc.pb.h"
   "${API_GENERATED_DIR}/google/api/annotations.grpc.pb.h"
   "${API_GENERATED_DIR}/google/api/http.grpc.pb.h"
   "${API_GENERATED_DIR}/google/rpc/status.grpc.pb.h")
-
-#SQLite3
-add_library(database SHARED
-        ${CMAKE_CURRENT_SOURCE_DIR}/SQLite3/sqlite3.c)
-
-target_include_directories(database
-        PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/SQLite3)
-
-target_link_libraries(database
-        PUBLIC Threads::Threads
-        dl)
 
 
 # Service client
@@ -85,9 +69,7 @@ target_include_directories(service_client PRIVATE
         "${API_GENERATED_DIR}")
 
 target_link_libraries(service_client
-  PUBLIC gRPC::grpc++ gRPC::grpc++_reflection
-  database
-  PRIVATE picosha)
+  PUBLIC gRPC::grpc++ gRPC::grpc++_reflection)
 
 
 

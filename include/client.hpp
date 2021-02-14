@@ -20,7 +20,7 @@
 
 class BlockChainClient {
 public:
-    BlockChainClient();
+    [[noreturn]] BlockChainClient();
     std::string name;
 private:
     std::unique_ptr<blockchain::Blockchain::Stub> client;

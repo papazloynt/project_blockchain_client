@@ -5,7 +5,7 @@
 #include "client.hpp"
 
 
-BlockChainClient::BlockChainClient() {
+[[noreturn]] BlockChainClient::BlockChainClient() {
     auto channel = grpc::CreateChannel("0.0.0.0:9090", grpc::InsecureChannelCredentials());
     client = blockchain::Blockchain::NewStub(channel);
 
@@ -16,17 +16,21 @@ BlockChainClient::BlockChainClient() {
               << "Press 2 to register in the system." << std::endl;
     short p;
     std::cin >> p;
-    switch (p) {
-        case 1:
-            Authorization();
-            break;
-        case 2:
-            Registration();
-            break;
-        default:
-            std::cout << "Unknown command!";
-            exit(1);
+    while ( (p != 1) && (p != 2) ) {
+        std::cout << "Unknown command! "
+                     "Please enter correct command number"
+                  << std::endl;
+        std::cin >> p;
     }
+        switch (p) {
+            case 1:
+                Authorization();
+                break;
+            case 2:
+                Registration();
+                break;
+        }
+
     while (true) {
         std::cout << "Service functionality:\n"
                      "Enter 1 to make a transaction.\n"
@@ -74,6 +78,7 @@ void BlockChainClient::Registration() {
                      << response.password() << std::endl
                      << "Don't forget it" << std::endl;
     } else {
+        // генерация исключения или код ошибки
         std::cout << "Something went wrong,"
                      " please try again later.\n" <<
                      "Most likely, the name you are entering"
